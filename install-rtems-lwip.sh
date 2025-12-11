@@ -11,4 +11,3 @@ python3 waf configure --prefix=$RTEMS_PREFIX --rtems-bsp=arm/nucleo-h743zi \
     --lwip-opts="$LWIP_OPTS_PATH"
 python3 waf
 python3 waf install
-
