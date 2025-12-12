@@ -73,6 +73,9 @@ set(LIB_LWIP_NAME lwip)
 
 add_executable(${TARGET_NAME})
 
+# Set output name with .elf extension
+set_target_properties(${TARGET_NAME} PROPERTIES OUTPUT_NAME "${TARGET_NAME}.elf")
+
 ################################################################################
 # Application
 ################################################################################
