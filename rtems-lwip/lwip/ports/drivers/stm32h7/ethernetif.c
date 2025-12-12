@@ -61,6 +61,9 @@
        to L1-CACHE line size (32 bytes).
 */
 
+ETH_HandleTypeDef EthHandle;
+ETH_TxPacketConfig TxConfig;
+
 #ifdef __rtems__
 netif_init_fn eth_lwip_init_fnc = &ethernetif_init;
 
@@ -70,10 +73,7 @@ ETH_DMADescTypeDef DMARxDscrTab[ETH_RX_DESC_CNT] __attribute__((section(".bsp_no
 ETH_DMADescTypeDef DMATxDscrTab[ETH_TX_DESC_CNT]  __attribute__((section(".bsp_nocache"), __aligned__(DMA_DESCRIPTOR_ALIGNMENT)));  /* Ethernet Tx DMA Descriptors */
 /* Ethernet Receive Buffers. Just place somewhere is BSS instead of explicitely placing it */
 uint8_t Rx_Buff[ETH_RX_DESC_CNT][ETH_RX_BUFFER_SIZE] RTEMS_ALIGNED(DMA_DESCRIPTOR_ALIGNMENT);
-#endif /* __rtems__ */
-
-ETH_HandleTypeDef EthHandle;
-ETH_TxPacketConfig TxConfig; 
+#endif /* __rtems__ */ 
 
 lan8742_Object_t LAN8742;
 
