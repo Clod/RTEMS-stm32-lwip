@@ -1,4 +1,5 @@
 #include "conf_app.h"
+#include "stm32h7xx_hal.h"
 
 #include <bsp.h>
 #include <rtems/rtems/tasks.h>

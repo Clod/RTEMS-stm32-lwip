@@ -108,6 +108,58 @@ lan8742_IOCtx_t  LAN8742_IOCtx = {ETH_PHY_IO_Init,
 
 LWIP_MEMPOOL_DECLARE(RX_POOL, 10, sizeof(struct pbuf_custom), "Zero-copy RX PBUF pool");
 
+/* Legacy HAL_ETH function wrappers for compatibility with modern HAL */
+HAL_StatusTypeDef HAL_ETH_DescAssignMemory(ETH_HandleTypeDef *heth, uint32_t Index, uint8_t *pBuffer1, uint8_t *pBuffer2)
+{
+  /* Modern HAL doesn't have this function - use direct descriptor assignment */
+  if (Index < ETH_RX_DESC_CNT) {
+    heth->Init.RxDesc[Index].Desc0 = (uint32_t)pBuffer1;
+    heth->Init.RxDesc[Index].Desc1 = (uint32_t)pBuffer2;
+    return HAL_OK;
+  }
+  return HAL_ERROR;
+}
+
+uint8_t HAL_ETH_IsRxDataAvailable(ETH_HandleTypeDef *heth)
+{
+  /* Modern HAL uses different approach - check if data is ready */
+  return (heth->RxDescList.RxDescIdx != heth->RxDescList.RxDescTailIdx) ? 1 : 0;
+}
+
+HAL_StatusTypeDef HAL_ETH_GetRxDataBuffer(ETH_HandleTypeDef *heth, ETH_BufferTypeDef *RxBuffer)
+{
+  /* Modern HAL equivalent - extract buffer info from descriptor */
+  if (RxBuffer != NULL && heth->RxDescList.RxDescIdx < ETH_RX_DESC_CNT) {
+    RxBuffer->buffer = (uint8_t *)heth->Init.RxDesc[heth->RxDescList.RxDescIdx].Desc0;
+    RxBuffer->len = heth->Init.RxDesc[heth->RxDescList.RxDescIdx].Desc1 & 0x3FFF; /* Extract length */
+    return HAL_OK;
+  }
+  return HAL_ERROR;
+}
+
+HAL_StatusTypeDef HAL_ETH_GetRxDataLength(ETH_HandleTypeDef *heth, uint32_t *Length)
+{
+  /* Modern HAL equivalent */
+  if (Length != NULL && heth->RxDescList.RxDescIdx < ETH_RX_DESC_CNT) {
+    *Length = heth->Init.RxDesc[heth->RxDescList.RxDescIdx].Desc1 & 0x3FFF; /* Extract length */
+    return HAL_OK;
+  }
+  return HAL_ERROR;
+}
+
+HAL_StatusTypeDef HAL_ETH_BuildRxDescriptors(ETH_HandleTypeDef *heth)
+{
+  /* Modern HAL equivalent - advance to next descriptor */
+  if (heth->RxDescList.RxDescIdx < ETH_RX_DESC_CNT) {
+    heth->RxDescList.RxDescIdx++;
+    if (heth->RxDescList.RxDescIdx >= ETH_RX_DESC_CNT) {
+      heth->RxDescList.RxDescIdx = 0;
+    }
+    return HAL_OK;
+  }
+  return HAL_ERROR;
+}
+
 /* Private functions ---------------------------------------------------------*/
 /*******************************************************************************
                        LL Driver Interface ( LwIP stack --> ETH) 

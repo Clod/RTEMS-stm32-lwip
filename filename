@@ -93,12 +93,10 @@ target_sources(${TARGET_NAME} PRIVATE
 
 link_directories(${RTEMS_BSP_LIB_PATH})
 
-target_link_libraries(${TARGET_NAME} PRIVATE
-    # Use a link group to resolve circular dependencies between lwip and rtemscpu.
-    -Wl,--start-group
-    ${LIB_LWIP_NAME}
-    -Wl,--end-group
-)
+# Add lwip to the linker flags and wrap the core libraries in a group
+# to resolve circular dependencies between lwip and rtemscpu.
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--start-group -llwip -Wl,--end-group")
+
 
 target_include_directories(${TARGET_NAME} PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}

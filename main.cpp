@@ -12,6 +12,10 @@
  * @author  R. Mueller
  * @return
  */
+#include <cstdio>
+#include <cmath>
+#include <cstring>
+
 #include "conf_app.h"
 #include "rtems_lwip/rtems_lwip.h"
 
@@ -27,8 +31,6 @@
 
 #include <rtems.h>
 #include <rtems/console.h>
-
-#include <stdio.h>
 
 int main() {
   printf("\n\r-- STM32 RTEMS lwIP Application -- \n\r");
